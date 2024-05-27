@@ -1,33 +1,35 @@
-const response = await fetch("https://api-product-morty.vercel.app/products")
+const response = await fetch("https://api-product-morty.vercel.app/products");
+const data = await response.json();
 
-// console.log(response)
-const tbody = document.querySelector('tbody')
-const data = await response.json()
-data.forEach(c => {
-    console.log(c)
+// Get references to the table elements
+const thead = document.querySelector('thead');
+const tbody = document.querySelector('tbody');
 
-    
-    const trNode = document.createElement('tr')
-    const idNode = document.createElement('td')
-    const priceNode = document.createElement('td')
-    const nameNode = document.createElement('td')
-    const categoryNode = document.createElement('td')
+// Extract and create table headers
+const headers = Object.keys(data[0]);
+const trHead = document.createElement('tr');
+headers.forEach(header => {
+    const th = document.createElement('th');
+    th.textContent = header
+    trHead.appendChild(th);
+});
+thead.appendChild(trHead);
 
-
-    idNode.textContent = c.id;
-    priceNode.textContent = c.price;
-    nameNode.textContent = c.name;
-    categoryNode.textContent = c.category;
-
-    
-    
-    trNode.appendChild(idNode)
-    trNode.appendChild(nameNode)
-    trNode.appendChild(categoryNode)
-    trNode.appendChild(priceNode)
-    tbody.appendChild(trNode)
-    
-
-
-})
-
+// Create table rows and cells from the data
+data.forEach(item => {
+    const tr = document.createElement('tr');
+    headers.forEach(header => {
+        const td = document.createElement('td');
+        if(typeof item[header] == 'string' && item[header]?.includes("http")) {
+            const pictureNode = document.createElement('div');
+            const img = document.createElement('img');
+            img.src = item[header];
+            pictureNode.appendChild(img);
+            td.appendChild(pictureNode);
+        }else {
+            td.textContent = item[header];
+        }
+        tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+});
